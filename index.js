@@ -29,79 +29,84 @@ async function run() {
         console.log('super car database connected successfully');
         const database = client.db("super_car_shop");
         const productsCollection = database.collection("products");
-        // const usersCollection = database.collection("users");
+        const ordersCollection = database.collection("orders");
+        const usersCollection = database.collection("users");
 
 
+        // GET API Load all orders
+        app.get('/orders', async (req, res) => {
+            const cursor = ordersCollection.find({});
+            const orders = await cursor.toArray();
+            res.json(orders);
+        })
 
+        // GET API orders by specific user
+        app.get('/orders', async (req, res) => {
+            const email = req.query.email;
+            console.log(email);
+            const query = { email: email, };
+            const cursor = ordersCollection.find(query);
+            const orders = await cursor.toArray();
+            res.json(orders)
+        })
 
-        // GET API appointments 
-        // app.get('/appointments', verifyToken, async (req, res) => {
-        //     const email = req.query.email;
-        //     const date = req.query.date;
-        //     console.log(date, email);
-        //     const query = { email: email, date: date };
-        //     const cursor = appointmentsCollection.find(query);
-        //     const appointments = await cursor.toArray();
-        //     res.json(appointments);
-
-        // })
-
-        // POST API appointments 
-        // app.post('/appointments', async (req, res) => {
-        //     const appointment = req.body;
-        //     const result = await appointmentsCollection.insertOne(appointment);
-        //     res.json(result);
-        // });
+        // POST API  orders send to database
+        app.post('/orders', async (req, res) => {
+            const orders = req.body;
+            console.log(orders);
+            const result = await ordersCollection.insertOne(orders);
+            res.json(result);
+        });
 
         // GET API specific user email
-        // app.get('/users/:email', async (req, res) => {
-        //     const email = req.params.email;
-        //     const query = { email: email };
-        //     const user = await usersCollection.findOne(query);
-        //     let isAdmin = false;
-        //     if (user?.role === 'admin') {
-        //         isAdmin = true;
-        //     };
-        //     res.json({ admin: isAdmin });
+        app.get('/users/:email', async (req, res) => {
+            const email = req.params.email;
+            const query = { email: email };
+            const user = await usersCollection.findOne(query);
+            let isAdmin = false;
+            if (user?.role === 'admin') {
+                isAdmin = true;
+            };
+            res.json({ admin: isAdmin });
 
-        // });
+        });
 
 
         // POST API users
-        // app.post('/users', async (req, res) => {
-        //     const user = req.body;
-        //     const result = await usersCollection.insertOne(user);
-        //     res.json(result);
-        // });
+        app.post('/users', async (req, res) => {
+            const user = req.body;
+            const result = await usersCollection.insertOne(user);
+            res.json(result);
+        });
 
         // PUT API users
-        // app.put('/users', async (req, res) => {
-        //     const user = req.body;
-        //     const filter = { email: user.email }
-        //     const options = { upsert: true };
-        //     const updateDoc = { $set: user }
-        //     const result = await usersCollection.updateOne(filter, updateDoc, options);
-        //     res.json(result);
-        // });
+        app.put('/users', async (req, res) => {
+            const user = req.body;
+            const filter = { email: user.email }
+            const options = { upsert: true };
+            const updateDoc = { $set: user }
+            const result = await usersCollection.updateOne(filter, updateDoc, options);
+            res.json(result);
+        });
 
         // PUT API users admin
-        // app.put('/users/admin', verifyToken, async (req, res) => {
-        //     const user = req.body;
-        //     const requester = req.decodedEmail;
-        //     if (requester) {
-        //         const requesterAccount = await usersCollection.findOne({ email: requester });
-        //         if (requesterAccount.role === 'admin') {
-        //             const filter = { email: user.email };
-        //             const updateDoc = { $set: { role: 'admin' } };
-        //             const result = await usersCollection.updateOne(filter, updateDoc);
-        //             res.json(result);
-        //         }
-        //     }
-        //     else {
-        //         res.status(403).json({ message: 'your do not have access to make admin' })
-        //     }
+        app.put('/users/admin', async (req, res) => {
+            const user = req.body;
+            const requester = req.decodedEmail;
+            if (requester) {
+                const requesterAccount = await usersCollection.findOne({ email: requester });
+                if (requesterAccount.role === 'admin') {
+                    const filter = { email: user.email };
+                    const updateDoc = { $set: { role: 'admin' } };
+                    const result = await usersCollection.updateOne(filter, updateDoc);
+                    res.json(result);
+                }
+            }
+            else {
+                res.status(403).json({ message: 'your do not have access to make admin' })
+            }
 
-        // })
+        })
 
 
     } finally {
