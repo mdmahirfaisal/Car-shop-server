@@ -30,6 +30,7 @@ async function run() {
         const database = client.db("super_car_shop");
         const productsCollection = database.collection("products");
         const ordersCollection = database.collection("orders");
+        const reviewCollection = database.collection("review");
         const usersCollection = database.collection("users");
 
 
@@ -37,7 +38,7 @@ async function run() {
         app.get('/orders', async (req, res) => {
             const cursor = ordersCollection.find({});
             const orders = await cursor.toArray();
-            res.json(orders);
+            res.send(orders);
         })
 
         // GET API orders by specific user
@@ -47,16 +48,49 @@ async function run() {
             const query = { email: email, };
             const cursor = ordersCollection.find(query);
             const orders = await cursor.toArray();
-            res.json(orders)
+            res.send(orders)
         })
 
         // POST API  orders send to database
         app.post('/orders', async (req, res) => {
             const orders = req.body;
-            console.log(orders);
             const result = await ordersCollection.insertOne(orders);
             res.json(result);
         });
+
+
+        // GET API Load all products
+        app.get('/products', async (req, res) => {
+            const cursor = productsCollection.find({});
+            const products = await cursor.toArray();
+            res.send(products);
+        })
+
+
+        // POST API  products send to database
+        app.post('/products', async (req, res) => {
+            const products = req.body;
+            console.log(products);
+            const result = await productsCollection.insertOne(products);
+            res.json(result);
+        });
+
+
+        // POST API  review send to database
+        app.post('/review', async (req, res) => {
+            const review = req.body;
+            const result = await reviewCollection.insertOne(review);
+            res.send(result);
+        });
+
+        // GET API Load all review
+        app.get('/review', async (req, res) => {
+            const cursor = reviewCollection.find({});
+            const review = await cursor.toArray();
+            res.send(review);
+        })
+
+
 
         // GET API specific user email
         app.get('/users/:email', async (req, res) => {
