@@ -142,19 +142,13 @@ async function run() {
         // PUT API users admin
         app.put('/users/admin', async (req, res) => {
             const user = req.body;
-            const requester = req.decodedEmail;
-            if (requester) {
-                const requesterAccount = await usersCollection.findOne({ email: requester });
-                if (requesterAccount.role === 'admin') {
-                    const filter = { email: user.email };
-                    const updateDoc = { $set: { role: 'admin' } };
-                    const result = await usersCollection.updateOne(filter, updateDoc);
-                    res.json(result);
-                }
-            }
-            else {
-                res.status(403).json({ message: 'your do not have access to make admin' })
-            }
+            const filter = { email: user.email };
+            const updateDoc = { $set: { role: 'admin' } };
+            const result = await usersCollection.updateOne(filter, updateDoc);
+            console.log(result, 'admin created successfully');
+            res.json(result);
+
+
 
         })
 
