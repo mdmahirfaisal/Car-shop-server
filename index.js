@@ -123,6 +123,7 @@ async function run() {
         // POST API users
         app.post('/users', async (req, res) => {
             const user = req.body;
+            console.log('new user added successfully', user);
             const result = await usersCollection.insertOne(user);
             res.json(result);
         });
@@ -130,6 +131,7 @@ async function run() {
         // PUT API users
         app.put('/users', async (req, res) => {
             const user = req.body;
+            console.log(user);
             const filter = { email: user.email }
             const options = { upsert: true };
             const updateDoc = { $set: user }
