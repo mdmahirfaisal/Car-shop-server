@@ -1,5 +1,7 @@
 const express = require('express')
 const { MongoClient } = require('mongodb');
+const ObjectId = require('mongodb').ObjectId;
+
 // const admin = require("firebase-admin");
 
 const app = express()
@@ -57,6 +59,18 @@ async function run() {
             const result = await ordersCollection.insertOne(orders);
             res.json(result);
         });
+
+        // DELETE Order  with user
+        app.delete('/orders/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: ObjectId(id) };
+            const result = await ordersCollection.deleteOne(query);
+            res.send(result)
+        })
+
+
+
+
 
 
         // GET API Load all products
