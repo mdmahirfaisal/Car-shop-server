@@ -147,8 +147,18 @@ async function run() {
             const result = await usersCollection.updateOne(filter, updateDoc);
             console.log(result, 'admin created successfully');
             res.json(result);
+        })
 
-
+        // PUT API status update 
+        app.put('/updateOrderStatus', (req, res) => {
+            const { id, status } = req.body;
+            console.log(req.body);
+            ordersCollection.findOneAndUpdate(
+                { _id: ObjectId(id) },
+                {
+                    $set: { status },
+                }
+            ).then(result => res.send(result.lastErrorObject.updatedExisting))
         })
 
     } finally {
