@@ -37,11 +37,11 @@ async function run() {
 
 
         // GET API Load all orders
-        app.get('/orders', async (req, res) => {
-            const cursor = ordersCollection.find({});
-            const orders = await cursor.toArray();
-            res.send(orders);
-        })
+        // app.get('/orders', async (req, res) => {
+        //     const cursor = ordersCollection.find({});
+        //     const orders = await cursor.toArray();
+        //     res.send(orders);
+        // })
 
         // GET API orders by specific user
         app.get('/orders', async (req, res) => {
@@ -49,8 +49,8 @@ async function run() {
             console.log(email);
             const query = { email: email, };
             const cursor = ordersCollection.find(query);
-            const orders = await cursor.toArray();
-            res.send(orders)
+            const result = await cursor.toArray();
+            res.json(result)
         })
 
         // POST API  orders send to database
