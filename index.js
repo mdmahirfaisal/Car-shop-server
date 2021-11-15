@@ -82,7 +82,6 @@ async function run() {
         app.get('/products/:id', async (req, res) => {
             const id = req.params.id;
             const query = { _id: ObjectId(id) };
-            console.log('aaaaaaaaaaa');
             const result = await productsCollection.findOne(query);
             console.log(result);
             res.send(result)
@@ -105,6 +104,17 @@ async function run() {
             const result = await productsCollection.insertOne(products);
             res.json(result);
         });
+
+        // PUT API product update 
+        app.put('/updateProduct', async (req, res) => {
+            const user = req.body;
+            const filter = { email: user.email }
+            const options = { upsert: true };
+            const updateDoc = { $set: user }
+            const result = await productsCollection.updateOne(filter, updateDoc, options);
+            res.json(result);
+        });
+
 
 
         // POST API  review send to database
