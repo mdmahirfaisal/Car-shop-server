@@ -44,7 +44,7 @@ async function run() {
         })
 
         // GET API orders by specific user
-        app.get('/orders', async (req, res) => {
+        app.get('/orders/', async (req, res) => {
             const email = req.query.email;
             console.log(email);
             const query = { email: email, };
@@ -70,14 +70,20 @@ async function run() {
 
 
 
-
-
-
         // GET API Load all products
         app.get('/products', async (req, res) => {
             const cursor = productsCollection.find({});
             const products = await cursor.toArray();
             res.send(products);
+        })
+
+
+        // GET single Product API
+        app.get('/products/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: ObjectId(id) };
+            const result = await productsCollection.findOne(query);
+            res.send(result)
         })
 
 
